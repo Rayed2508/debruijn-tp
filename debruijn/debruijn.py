@@ -17,20 +17,21 @@ import argparse
 import os
 import sys
 import networkx as nx
-import matplotlib
+import pytest
+#import matplotlib
 from operator import itemgetter
 import random
 random.seed(9001)
 from random import randint
 import statistics
 
-__author__ = "Your Name"
+__author__ = "BEN HAMZA Rayed"
 __copyright__ = "Universite Paris Diderot"
-__credits__ = ["Your Name"]
+__credits__ = ["BEN HAMZA Rayed"]
 __license__ = "GPL"
 __version__ = "1.0.0"
-__maintainer__ = "Your Name"
-__email__ = "your@email.fr"
+__maintainer__ = "BEN HAMZA Rayed"
+__email__ = "rayed1997@outlook.fr"
 __status__ = "Developpement"
 
 def isfile(path):
@@ -64,21 +65,89 @@ def get_arguments():
                         help="Output contigs in fasta file")
     return parser.parse_args()
 
-
 def read_fastq(fastq_file):
-    pass
+#prend un seul argument correspondant au fichier fastq et retourne un générateur de séquences
+    with open(fastq_file, "r") as file:
+        for line_number, n in enumerate(file):
+            if line_number % 4 == 1:
+                yield n.strip()
+
 
 
 def cut_kmer(read, kmer_size):
-    pass
-
+#retourne un générateur de k-mer   
+    decal = 0
+    seq_length = len(read)
+    while decal + kmer_size <= seq_length:
+        yield read[decal:(decal + kmer_size)]
+        decal += 1
 
 def build_kmer_dict(fastq_file, kmer_size):
-    pass
+#retourne un dictionnaire ayant pour clé le k-mer et pour valeur le nombre d’occurrence de ce k-mer
+    reads = read_fastq(fastq_file)
+    kmer_count = {}
+    for read in reads:
+        kmers = cut_kmer(read, kmer_size)
+        for kmer in kmers:
+            if not kmer in kmer_count:
+                kmer_count[kmer] = 1
+            else:
+                kmer_count[kmer] += 1
+    return kmer_count
 
 
 def build_graph(kmer_dict):
-    pass
+#Créer un arbre orienté  et pondéré représentant tous les k-mers préfixes et suffixes existant. 
+    graph = nx.DiGraph()
+    for kmer in kmer_dict.keys():
+        p = kmer[:-1]
+        s = kmer[1:]
+        graph.add_edge(p, s, weight=kmer_dict[kmer])
+    return graph
+
+
+def get_starting_nodes(graph):
+#retourne une liste de noeuds d’entrée
+    entry_node_list = []
+    for node in graph.nodes():
+        if not list(graph.predecessors(node)):
+            entry_node_list.append(node)
+    return entry_node_list
+
+def get_sink_nodes(graph):
+#retourne une liste de noeuds de sortie 
+    exit_node_list = []
+    for node in graph.nodes():
+        if not list(graph.successors(node)):
+            exit_node_list.append(node)
+    return exit_node_list
+
+
+def get_contigs(graph, starting_nodes, ending_nodes):
+#Retourne une liste de tuple(contig, taille du contig)
+    contigs = []
+    for node_start in starting_nodes:
+        for node_end in ending_nodes:
+                path = nx.shortest_path(graph, node_start, node_end)
+                contig = "".join([node[0] for node in path[:-1]] + [path[-1]])
+                contigs.append((contig, len(contig)))
+    return contigs
+
+def fill(text, width=80):
+#Retour chariot tous les 80 caractères
+    return os.linesep.join(text[i:i+width] for i in range(0, len(text), width))
+
+
+def save_contigs(contigs_list, output_file):
+#Prend une liste de tuple et un nom de fichier de sortie et écrit un fichier de sortie contenant les contigs selon le format fasta
+    entete = ">contig{} longueur={}\n"
+    with open(output_file, "w") as outputfile:
+        for i, contig in enumerate(contigs_list):
+            outputfile.write(entete.format(i, contig[1]))
+            outputfile.write(fill(contig[0])+"\n")
+
+
+
 
 
 def remove_paths(graph, path_list, delete_entry_node, delete_sink_node):
@@ -107,17 +176,6 @@ def solve_entry_tips(graph, starting_nodes):
 def solve_out_tips(graph, ending_nodes):
     pass
 
-def get_starting_nodes(graph):
-    pass
-
-def get_sink_nodes(graph):
-    pass
-
-def get_contigs(graph, starting_nodes, ending_nodes):
-    pass
-
-def save_contigs(contigs_list, output_file):
-    pass
 
 #==============================================================
 # Main program
@@ -128,6 +186,17 @@ def main():
     """
     # Get arguments
     args = get_arguments()
+    print("kmer size: ", args.kmer_size)
+    #print(build_kmer_dict(args.fastq_file, args.kmer_size))
+    print("number of kmers : ", len(build_kmer_dict(args.fastq_file, args.kmer_size)))
+    graph = build_graph(build_kmer_dict(args.fastq_file, args.kmer_size))
+    
+
+    starting_nodes = get_starting_nodes(graph)
+    exit_nodes = get_sink_nodes(graph)
+    print(starting_nodes)
+    print(exit_nodes)
+
 
 if __name__ == '__main__':
     main()
