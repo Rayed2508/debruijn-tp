@@ -193,8 +193,8 @@ def simplify_bubbles(graph):
     sink_nodes = get_sink_nodes(graph)
     for ancestor_node in starting_nodes:
         for descendant_node in sink_nodes:
-            current_entry = start_node
-            current_exit = sink_node
+            current_entry = ancestor_node
+            current_exit = descendant_node
             successors = list(graph.successors(current_entry))
             predecessors = list(graph.predecessors(current_exit))
             while len(successors) < 2 and successors:
