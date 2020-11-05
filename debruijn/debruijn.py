@@ -159,7 +159,7 @@ def path_average_weight(graph, path):
     return total/(len(path)-1) if total else 0
 
 def remove_paths(graph, path_list, delete_entry_node, delete_sink_node):
-    for path in paths:
+    for path in path_list:
         graph.remove_nodes_from(path[(not delete_entry_node):
                                      (None if delete_sink_node else -1)])
     return graph
