@@ -186,7 +186,7 @@ def solve_bubble(graph, ancestor_node, descendant_node):
     path_lengths = [len(path_list) for path in path_list]
     avg_path_weights = [path_average_weight(graph, path) for path in path_list]
 
-    return select_best_path(graph, paths, path_lengths, avg_path_weights)
+    return select_best_path(graph, path_list, path_lengths, avg_path_weights)
 
 def simplify_bubbles(graph):
     starting_nodes = get_starting_nodes(graph)
@@ -231,7 +231,7 @@ def solve_entry_tips(graph, starting_nodes):
 def solve_out_tips(graph, ending_nodes):
     graph = simplify_bubbles(graph)
     tips = []
-    for sink_node in sink_nodes:
+    for sink_node in ending_nodes:
         current_node = sink_node
         path = [current_node]
         successors = list(graph.successors(current_node))
