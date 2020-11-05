@@ -140,29 +140,37 @@ def fill(text, width=80):
 
 def save_contigs(contigs_list, output_file):
 #Prend une liste de tuple et un nom de fichier de sortie et écrit un fichier de sortie contenant les contigs selon le format fasta
-    entete = ">contig{} longueur={}\n"
-    with open(output_file, "w") as outputfile:
+    entt = ">contig_Numéro{} len={}\n"
+    with open(output_file, "w") as fichiersortie:
         for i, contig in enumerate(contigs_list):
-            outputfile.write(entete.format(i, contig[1]))
+            fichiersortie.write(entt.format(i, contig[1]))
             outputfile.write(fill(contig[0])+"\n")
 
+def std(data):
+    return statistics.stdev(data)
 
-
-
+def path_average_weight(graph, path):
+    total = 0
+    for node_1, node_2 in zip(path[:-1], path[1:]):
+        try:
+            total += graph[node_1][node_2]["weight"]
+        except KeyError:
+            pass
+    return total/(len(path)-1) if total else 0
 
 def remove_paths(graph, path_list, delete_entry_node, delete_sink_node):
-    pass
+    for path in paths:
+        graph.remove_nodes_from(path[(not delete_entry_node):
+                                     (None if delete_sink_node else -1)])
+    return graph
 
-def std(data):
-    pass
 
 
 def select_best_path(graph, path_list, path_length, weight_avg_list, 
                      delete_entry_node=False, delete_sink_node=False):
     pass
 
-def path_average_weight(graph, path):
-    pass
+
 
 def solve_bubble(graph, ancestor_node, descendant_node):
     pass
