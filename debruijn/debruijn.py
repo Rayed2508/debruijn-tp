@@ -143,8 +143,8 @@ def save_contigs(contigs_list, output_file):
     entt = ">contig_Numéro{} len={}\n"
     with open(output_file, "w") as fichiersortie:
         for i, contig in enumerate(contigs_list):
-            fichiersortie.write(entt.format(i, contig[1]))
-            fichiersortie.write(fill(contig[1])+"\n")
+            fichiersortie.write(entt.format(i, contig[0]))
+            fichiersortie.write(fill(contig[0]))
 
 def std(data):
     return statistics.stdev(data)
