@@ -56,4 +56,6 @@ def test_save_contigs():
     contig = [("TCAGCGAT", 8), ("TCAGCGAA",8), ("ACAGCGAT", 8), ("ACAGCGAA", 8)]
     save_contigs(contig, test_file)
     with open(test_file, 'rb') as contig_test:
-        assert hashlib.md5(contig_test.read()).hexdigest() == "b5e69b92e81b7d962748ea470e4ee1ad"
+        assert hashlib.md5(contig_test.read()).hexdigest() == "ca84dfeb5d58eca107e34de09b3cc997"
+
+    
