@@ -69,7 +69,7 @@ def read_fastq(fastq_file):
 #prend un seul argument correspondant au fichier fastq et retourne un générateur de séquences
     with open(fastq_file, "r") as file:
         for line_number, n in enumerate(file):
-            #if line_number % 4 == 1:
+            if line_number % 4 == 1:
             yield n.strip()
 
 
