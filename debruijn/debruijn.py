@@ -144,7 +144,7 @@ def save_contigs(contigs_list, output_file):
     with open(output_file, "w") as fichiersortie:
         for i, contig in enumerate(contigs_list):
             fichiersortie.write(entt.format(i, contig[1]))
-            outputfile.write(fill(contig[0])+"\n")
+            fichiersortie.write(fill(contig[0])+"\n")
 
 def std(data):
     return statistics.stdev(data)
