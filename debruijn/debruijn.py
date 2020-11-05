@@ -141,7 +141,7 @@ def fill(text, width=80):
 def save_contigs(contigs_list, output_file):
 #Prend une liste de tuple et un nom de fichier de sortie et écrit un fichier de sortie contenant les contigs selon le format fasta
     entt = ">contig_Numéro{} len={}\n"
-    with open(output_file, "rb") as fichiersortie:
+    with open(output_file, "w") as fichiersortie:
         for i, contig in enumerate(contigs_list):
             fichiersortie.write(entt.format(i, contig[1]))
             fichiersortie.write(fill(contig[0])+"\n")
@@ -182,16 +182,72 @@ def select_best_path(graph, path_list, path_length, weight_avg_list,
 
 
 def solve_bubble(graph, ancestor_node, descendant_node):
-    pass
+    path_list = list(nx.all_simple_paths(graph, ancestor_node, descendant_node))
+    path_lengths = [len(path_list) for path in path_list]
+    avg_path_weights = [path_average_weight(graph, path) for path in path_list]
+
+    return select_best_path(graph, paths, path_lengths, avg_path_weights)
 
 def simplify_bubbles(graph):
-    pass
+    starting_nodes = get_starting_nodes(graph)
+    sink_nodes = get_sink_nodes(graph)
+    for ancestor_node in starting_nodes:
+        for descendant_node in sink_nodes:
+            current_entry = start_node
+            current_exit = sink_node
+            successors = list(graph.successors(current_entry))
+            predecessors = list(graph.predecessors(current_exit))
+            while len(successors) < 2 and successors:
+                current_entry = successors[0]
+                successors = list(graph.successors(current_entry))
+            while len(predecessors) < 2 and predecessors:
+                current_exit = predecessors[0]
+                predecessors = list(graph.predecessors(current_exit))
+            if list(nx.all_simple_paths(graph, current_entry, current_exit)):
+                graph = solve_bubble(graph, current_entry, current_exit)
+    return graph
 
 def solve_entry_tips(graph, starting_nodes):
-    pass
+    graph = simplify_bubbles(graph)
+    tips = []
+    for start_node in starting_nodes:
+        current_node = start_node
+        path = [current_node]
+        successors = list(graph.successors(current_node))
+        predecessors = list(graph.predecessors(current_node))
+        while len(successors) < 2 and len(predecessors) < 2 and successors:
+            current_node = successors[0]
+            path.append(current_node)
+            successors = list(graph.successors(current_node))
+            predecessors = list(graph.predecessors(current_node))
+        tips.append(path)
+    path_lengths = [len(path) for path in tips]
+    avg_path_weights = [path_average_weight(graph, path) for path in tips]
+    graph = select_best_path(graph, tips, path_lengths, avg_path_weights,
+                             delete_entry_node=True)
+
+    return graph
 
 def solve_out_tips(graph, ending_nodes):
-    pass
+    graph = simplify_bubbles(graph)
+    tips = []
+    for sink_node in sink_nodes:
+        current_node = sink_node
+        path = [current_node]
+        successors = list(graph.successors(current_node))
+        predecessors = list(graph.predecessors(current_node))
+        while len(successors) < 2 and len(predecessors) < 2 and predecessors:
+            current_node = predecessors[0]
+            path.append(current_node)
+            successors = list(graph.successors(current_node))
+            predecessors = list(graph.predecessors(current_node))
+        tips.append(path[::-1])
+
+    path_lengths = [len(path) for path in tips]
+    avg_path_weights = [path_average_weight(graph, path) for path in tips]
+    graph = select_best_path(graph, tips, path_lengths, avg_path_weights,
+                             delete_sink_node=True)
+    return graph
 
 
 #==============================================================
