@@ -141,7 +141,7 @@ def fill(text, width=80):
 def save_contigs(contigs_list, output_file):
 #Prend une liste de tuple et un nom de fichier de sortie et écrit un fichier de sortie contenant les contigs selon le format fasta
     entt = ">contig_Numéro{} len={}\n"
-    with open(output_file, "w") as fichiersortie:
+    with open(output_file, "rb") as fichiersortie:
         for i, contig in enumerate(contigs_list):
             fichiersortie.write(entt.format(i, contig[1]))
             fichiersortie.write(fill(contig[0])+"\n")
@@ -168,7 +168,16 @@ def remove_paths(graph, path_list, delete_entry_node, delete_sink_node):
 
 def select_best_path(graph, path_list, path_length, weight_avg_list, 
                      delete_entry_node=False, delete_sink_node=False):
-    pass
+    best_weight_indexes = [i for i, weight in enumerate(weight_avg_list)
+                           if weight == max(weight_avg_list)]
+    best_length_and_weights = [length for i, length in enumerate(path_length)
+                               if i in best_weight_indexes]
+    best_path_indexes = [i for i in best_weight_indexes
+                         if path_length[i] == max(best_length_and_weights)]
+    best_path_index = random.choice(best_path_indexes)
+    graph = remove_paths(graph, path_list[:best_path_index]+path_list[(best_path_index+1):],
+                         delete_entry_node, delete_sink_node)
+    return graph
 
 
 
