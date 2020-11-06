@@ -154,6 +154,7 @@ def path_average_weight(graph, path):
     #Retourne un poids moyen.
     total = 0
     for node_1, node_2 in zip(path[:-1], path[1:]):
+        try:
             total += graph[node_1][node_2]["weight"]
         except KeyError:
             pass
