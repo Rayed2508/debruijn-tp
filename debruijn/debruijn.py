@@ -18,7 +18,7 @@ import os
 import sys
 import networkx as nx
 import pytest
-import matplotlib
+#import matplotlib
 from operator import itemgetter
 import random
 random.seed(9001)
@@ -247,26 +247,6 @@ def solve_out_tips(graph, ending_nodes):
     graph = select_best_path(graph, tips, path_lengths, avg_path_weights,
                              delete_sink_node=True)
     return graph
-
-
-def draw_graph(graph, graphimg_file):
-    """Dessin du graphe
-    """                                    
-    fig, ax = plt.subplots()
-    elarge = [(u, v) for (u, v, d) in graph.edges(data=True) if d['weight'] > 3]
-    #print(elarge)
-    esmall = [(u, v) for (u, v, d) in graph.edges(data=True) if d['weight'] <= 3]
-    #print(elarge)
-    # Draw the graph with networkx
-    #pos=nx.spring_layout(graph)
-    pos = nx.random_layout(graph)
-    nx.draw_networkx_nodes(graph, pos, node_size=6)
-    nx.draw_networkx_edges(graph, pos, edgelist=elarge, width=6)
-    nx.draw_networkx_edges(graph, pos, edgelist=esmall, width=6, alpha=0.5, 
-                           edge_color='b', style='dashed')
-    #nx.draw_networkx(graph, pos, node_size=10, with_labels=False)
-    # save image
-    plt.savefig(graphimg_file)
 
 
 
