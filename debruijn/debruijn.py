@@ -18,7 +18,7 @@ import os
 import sys
 import networkx as nx
 import pytest
-#import matplotlib
+import matplotlib
 from operator import itemgetter
 import random
 random.seed(9001)
