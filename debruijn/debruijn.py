@@ -154,16 +154,13 @@ def path_average_weight(graph, path):
     #Retourne un poids moyen.
     total = 0
     for node_1, node_2 in zip(path[:-1], path[1:]):
-        try:
             total += graph[node_1][node_2]["weight"]
-        except KeyError:
-            pass
     return total/(len(path)-1) if total else 0
 
 def remove_paths(graph, path_list, delete_entry_node, delete_sink_node):
+    #Retourne un graphe nettoyé des chemins indésirables
     for path in path_list:
-        graph.remove_nodes_from(path[(not delete_entry_node):
-                                     (None if delete_sink_node else -1)])
+        graph.remove_nodes_from(path[(not delete_entry_node):(None if delete_sink_node else -1)])
     return graph
 
 
@@ -250,6 +247,29 @@ def solve_out_tips(graph, ending_nodes):
     graph = select_best_path(graph, tips, path_lengths, avg_path_weights,
                              delete_sink_node=True)
     return graph
+
+
+def draw_graph(graph, graphimg_file):
+    """Dessin du graphe
+    """                                    
+    fig, ax = plt.subplots()
+    elarge = [(u, v) for (u, v, d) in graph.edges(data=True) if d['weight'] > 3]
+    #print(elarge)
+    esmall = [(u, v) for (u, v, d) in graph.edges(data=True) if d['weight'] <= 3]
+    #print(elarge)
+    # Draw the graph with networkx
+    #pos=nx.spring_layout(graph)
+    pos = nx.random_layout(graph)
+    nx.draw_networkx_nodes(graph, pos, node_size=6)
+    nx.draw_networkx_edges(graph, pos, edgelist=elarge, width=6)
+    nx.draw_networkx_edges(graph, pos, edgelist=esmall, width=6, alpha=0.5, 
+                           edge_color='b', style='dashed')
+    #nx.draw_networkx(graph, pos, node_size=10, with_labels=False)
+    # save image
+    plt.savefig(graphimg_file)
+
+
+
 
 
 #==============================================================
