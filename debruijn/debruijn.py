@@ -147,18 +147,18 @@ def save_contigs(contigs_list, output_file):
             fichiersortie.write(fill(contig[0]))
 
 def std(data):
+    #Retourne l'écart type
     return statistics.stdev(data)
 
 def path_average_weight(graph, path):
+    #Retourne un poids moyen.
     total = 0
     for node_1, node_2 in zip(path[:-1], path[1:]):
-        try:
             total += graph[node_1][node_2]["weight"]
-        except KeyError:
-            pass
     return total/(len(path)-1) if total else 0
 
 def remove_paths(graph, path_list, delete_entry_node, delete_sink_node):
+    
     for path in path_list:
         graph.remove_nodes_from(path[(not delete_entry_node):
                                      (None if delete_sink_node else -1)])
