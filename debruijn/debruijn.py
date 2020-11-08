@@ -19,6 +19,7 @@ import sys
 import networkx as nx
 import pytest
 import matplotlib
+import matplotlib.pyplot as plt
 from operator import itemgetter
 import random
 random.seed(9001)
@@ -146,7 +147,7 @@ def save_contigs(contigs_list, output_file):
             fichiersortie.write('\n')
    fichiersortie.close()
 
-   
+
 def std(data):
     #Retourne l'écart type
     return statistics.stdev(data)
