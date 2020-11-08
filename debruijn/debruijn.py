@@ -137,15 +137,16 @@ def fill(text, width=80):
 #Retour chariot tous les 80 caractères
     return os.linesep.join(text[i:i+width] for i in range(0, len(text), width))
 
-
 def save_contigs(contigs_list, output_file):
 #Prend une liste de tuple et un nom de fichier de sortie et écrit un fichier de sortie contenant les contigs selon le format fasta
-    entt = ">contig_Numéro{} len={}\n"
-    with open(output_file, "w") as fichiersortie:
-        for i, contig in enumerate(contigs_list):
-            fichiersortie.write(entt.format(i, contig[1]))
-            fichiersortie.write(fill(contig[0]))
+   with open(output_file, 'w+') as fichiersortie:
+        for i in range(len(contigs_list)):
+            fichiersortie.write('>contig_{} len={}\n'.format(i, contigs_list[i][1]))
+            fichiersortie.write(fill(contigs_list[i][0]))
+            fichiersortie.write('\n')
+   fichiersortie.close()
 
+   
 def std(data):
     #Retourne l'écart type
     return statistics.stdev(data)
