@@ -16,7 +16,7 @@
 import argparse
 import os
 import sys
-#import networkx as nx
+import networkx as nx
 import pytest
 import matplotlib
 from operator import itemgetter
